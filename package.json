@@ -1,0 +1,31 @@
+{
+  "name": "blockchain-explorer-telegram-bot",
+  "version": "0.1.0",
+  "description": "Blockchain explorer Telegram bot",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha"
+  },
+  "keywords": [],
+  "author": "nnqq",
+  "license": "MIT",
+  "dependencies": {
+    "blockchain.info": "^2.12.1",
+    "etherscan-api": "^10.0.0",
+    "pg": "^7.7.1",
+    "pg-hstore": "^2.3.2",
+    "pino": "^5.8.1",
+    "reconnecting-websocket": "^4.1.10",
+    "sequelize": "^4.41.2",
+    "telegraf": "^3.25.0",
+    "ws": "^6.1.2"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "eslint": "^5.9.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "mocha": "^5.2.0"
+  }
+}
