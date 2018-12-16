@@ -128,7 +128,9 @@ async function updatePriceSendNotif() {
       }
     });
 
-    await Promise.all(sendQueue);
+    for (const sendMsg of sendQueue) {
+      await sendMsg.catch();
+    }
   } catch (e) {
     logger.info(e);
   }
