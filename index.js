@@ -97,7 +97,6 @@ async function updatePriceSendNotif() {
       /about - Author, Github, Donate info.
       `;
 
-    const sendQueue = [];
     priceWatchersData.forEach((row) => {
       const {
         chatId, coinName, priceLow, priceHigh,
@@ -116,7 +115,9 @@ async function updatePriceSendNotif() {
           ${template.watchPriceNotifBody(coinName, price.btcUsd, priceLow, priceHigh)}
           `;
 
-        sendQueue.push(bot.telegram.sendMessage(chatId, notifMsg));
+        bot.telegram.sendMessage(chatId, notifMsg).catch((e) => {
+          if (e.message !== '403: Forbidden: bot was blocked by the user') logger.info(e);
+        });
       } else if (isEthAlert) {
         const notifMsg = xs`
           ${template.watchListNotifHeader('watch_price')}
@@ -124,13 +125,11 @@ async function updatePriceSendNotif() {
           ${template.watchPriceNotifBody(coinName, price.ethUsd, priceLow, priceHigh)}
           `;
 
-        sendQueue.push(bot.telegram.sendMessage(chatId, notifMsg));
+        bot.telegram.sendMessage(chatId, notifMsg).catch((e) => {
+          if (e.message !== '403: Forbidden: bot was blocked by the user') logger.info(e);
+        });
       }
     });
-
-    for (const sendMsg of sendQueue) {
-      await sendMsg.catch();
-    }
   } catch (e) {
     logger.info(e);
   }

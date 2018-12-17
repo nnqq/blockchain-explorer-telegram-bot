@@ -1,7 +1,3 @@
 {
-  "extends": "airbnb-base",
-  "rules": {
-    "no-await-in-loop": "off",
-    "no-restricted-syntax": "off"
-  }
+  "extends": "airbnb-base"
 }
