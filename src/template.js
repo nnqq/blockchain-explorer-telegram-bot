@@ -1,28 +1,39 @@
-//
+// @flow
+import type { typeBtcInputFrom } from '../flow-types/btc/btcInputFrom';
+import type { typeBtcOutputTo } from '../flow-types/btc/btcOutputTo';
+import type { typeEthTxInAddr } from '../flow-types/eth/ethTxInAddr';
+import type { typeBtcAddress } from '../flow-types/btc/btcAddress';
+import type { typeBtcTxItem } from '../flow-types/btc/btcTxItem';
+import type { typeBtcBlock } from '../flow-types/btc/btcBlock';
+import type { typeEthAddressDataBalance } from '../flow-types/eth/ethAddress-dataBalance';
+import type { typeEthAddressDataTxList } from '../flow-types/eth/ethAddress-dataTxList';
+import type { typeEthTxItem } from '../flow-types/eth/ethTxItem';
+import type { typeEthBlock } from '../flow-types/eth/ethBlock';
+import type { typeEthTxWatchList } from '../flow-types/eth/ethTxWatchList';
 
 const v = require('./validate');
 
-function xs(strings, ...expressions) {
-  const indent = new RegExp(`\n {${strings[0].match(/\n+( *)/)[1].length}}`, 'g');
+function xs(strings: any, ...expressions: Array<string>): string {
+  const indent: RegExp = new RegExp(`\n {${strings[0].match(/\n+( *)/)[1].length}}`, 'g');
   return expressions.reduce(
     (acc, expr, i) => `${acc}${expr}${strings[i + 1].replace(indent, '\n')}`,
     strings[0].replace(indent, '\n'),
   ).replace(/^\n|\n$/g, '');
 }
 
-function textTxsShowing(numOfTxs) {
+function textTxsShowing(numOfTxs: number): string {
   return numOfTxs >= 5 ? '⤵️ Last 5 transactions:' : '⤵️ All transactions:';
 }
 
-function isSpent(spent) {
+function isSpent(spent: boolean): string {
   return spent ? '🔴 Spent' : '✅ Not spent';
 }
 
-function addrAsLink(addrToCheck, currentAddr) {
+function addrAsLink(addrToCheck: string, currentAddr?: string): string {
   return addrToCheck === currentAddr ? addrToCheck : `/${addrToCheck}`;
 }
 
-function btcInputFrom(input, currentAddr) {
+function btcInputFrom(input: typeBtcInputFrom, currentAddr?: string): string {
   if (!input.prev_out) {
     return xs`
       
@@ -41,7 +52,7 @@ function btcInputFrom(input, currentAddr) {
     `;
 }
 
-function btcOutputTo(output, currentAddr) {
+function btcOutputTo(output: typeBtcOutputTo, currentAddr?: string): string {
   const { addr, value, spent } = output;
   const addrText = addr ? addrAsLink(addr, currentAddr) : 'Unable to decode output address';
   return xs`
@@ -53,9 +64,9 @@ function btcOutputTo(output, currentAddr) {
     `;
 }
 
-function ethTxInAddr(dataTx, currentAddr) {
-  const myAddr = currentAddr.toLowerCase();
-  let direction = '🔴 Output';
+function ethTxInAddr(dataTx: typeEthTxInAddr, currentAddr: string): string {
+  const myAddr: string = currentAddr.toLowerCase();
+  let direction: string = '🔴 Output';
   if (myAddr !== dataTx.from && myAddr === dataTx.to) {
     direction = '✅ Input';
   } else if (myAddr === dataTx.from && myAddr === dataTx.to) {
@@ -76,24 +87,24 @@ function ethTxInAddr(dataTx, currentAddr) {
     `;
 }
 
-function usdBalance(coinName, coinAmount, price) {
-  const balance = coinAmount * price;
+function usdBalance(coinName: string, coinAmount: number, price: number): string {
+  const balance: number = coinAmount * price;
   if (balance < 0.01 && balance > 0) {
     return `(Less than 0.01 USD @ ${price} ${coinName.toUpperCase()}/USD)`;
   }
   return `(${+balance.toFixed(2)} USD @ ${price} ${coinName.toUpperCase()}/USD)`;
 }
 
-function visitSite(link) {
+function visitSite(link: string): string {
   return `🌐 For more info, visit ${link}`;
 }
 
 class template {
-  static btcAddress(dataAddr, message, priceBtcUsd) {
-    let txList = '';
+  static btcAddress(dataAddr: typeBtcAddress, message: string, priceBtcUsd: number): string {
+    let txList: string = '';
 
     dataAddr.txs.forEach((txItem) => {
-      let txTemplate = xs`
+      let txTemplate: string = xs`
           
           
           
@@ -112,7 +123,7 @@ class template {
       txList += txTemplate;
     });
 
-    const btcBalance = v.satToBtc(dataAddr.final_balance);
+    const btcBalance: number = v.satToBtc(dataAddr.final_balance);
 
     return xs`
       ✉️ BTC address: ${dataAddr.address}
@@ -128,10 +139,10 @@ class template {
       `;
   }
 
-  static btcTxItem(dataTx, priceBtcUsd) {
-    let inOutList = '';
-    let totalInputs = 0;
-    let totalOuts = 0;
+  static btcTxItem(dataTx: typeBtcTxItem, priceBtcUsd: number): string {
+    let inOutList: string = '';
+    let totalInputs: number = 0;
+    let totalOuts: number = 0;
 
     dataTx.inputs.forEach((input) => {
       inOutList += btcInputFrom(input);
@@ -145,9 +156,9 @@ class template {
       totalOuts += output.value;
     });
 
-    const fees = v.satToBtc(v.onlyPositiveNum(totalInputs - totalOuts));
-    const inputsBtc = v.satToBtc(totalInputs);
-    const outsBtc = v.satToBtc(totalOuts);
+    const fees: number = v.satToBtc(v.onlyPositiveNum(totalInputs - totalOuts));
+    const inputsBtc: number = v.satToBtc(totalInputs);
+    const outsBtc: number = v.satToBtc(totalOuts);
 
     return xs`
       🔗 BTC TX hash: ${dataTx.hash}
@@ -164,12 +175,12 @@ class template {
       `;
   }
 
-  static btcBlock(dataBlock) {
-    let txList = '';
+  static btcBlock(dataBlock: typeBtcBlock): string {
+    let txList: string = '';
 
     const firstFiveTxs = dataBlock.tx.slice(0, 5);
     firstFiveTxs.forEach((txItem) => {
-      let txTemplate = xs`
+      let txTemplate: string = xs`
         
         
         
@@ -211,15 +222,15 @@ class template {
       `;
   }
 
-  static ethAddress(dataBalance, dataTxList,
-    message, priceEthUsd) {
-    let txList = '';
+  static ethAddress(dataBalance: typeEthAddressDataBalance, dataTxList: typeEthAddressDataTxList,
+    message: string, priceEthUsd: number): string {
+    let txList: string = '';
 
     dataTxList.result.forEach((txItem) => {
       txList += ethTxInAddr(txItem, message);
     });
 
-    const ethBalance = v.weiToEth(+dataBalance.result);
+    const ethBalance: number = v.weiToEth(+dataBalance.result);
 
     return xs`
       ✉️ ETH address: ${message}
@@ -231,7 +242,7 @@ class template {
       `;
   }
 
-  static ethTxItem(dataTx, priceEthUsd) {
+  static ethTxItem(dataTx: typeEthTxItem, priceEthUsd: number): string {
     const gasPrice = parseInt(dataTx.result.gasPrice, 16);
     const amountEth = v.weiToEth(parseInt(dataTx.result.value, 16));
 
@@ -249,7 +260,7 @@ class template {
       `;
   }
 
-  static ethBlock(dataBlock) {
+  static ethBlock(dataBlock: typeEthBlock) {
     let txList = '';
     const totalTxs = dataBlock.result.transactions.length;
 
@@ -287,7 +298,7 @@ class template {
       `;
   }
 
-  static ethTxWatchList(dataTx, priceEthUsd) {
+  static ethTxWatchList(dataTx: typeEthTxWatchList, priceEthUsd: number): string {
     const amount = v.weiToEth(parseInt(dataTx.value, 16));
     return xs`
       🔗 ETH TX hash: /${dataTx.hash}
@@ -300,7 +311,7 @@ class template {
       `;
   }
 
-  static watchListNotifHeader(command, isTxNotif) {
+  static watchListNotifHeader(command: string, isTxNotif?: true): string {
     if (isTxNotif) {
       return xs`
         👁 Notification from Watch List. To manage it, click /${command}
@@ -310,15 +321,15 @@ class template {
     return `👁 Notification from Watch List. To manage it, click /${command}`;
   }
 
-  static watchPriceNotifBody(coinName, currentPrice, priceLow,
-    priceHigh) {
+  static watchPriceNotifBody(coinName: string, currentPrice: number, priceLow: number,
+    priceHigh: number): string {
     return xs`
       ${v.capitalize(coinName)} price now ${currentPrice} USD.
       It outs of the range ${priceLow}-${priceHigh} USD you entered.
       `;
   }
 
-  static coinPrice(priceBtcUsd, priceEthUsd) {
+  static coinPrice(priceBtcUsd: number, priceEthUsd: number): string {
     return xs`
       Bitcoin: ${priceBtcUsd} USD
       Ethereum: ${priceEthUsd} USD

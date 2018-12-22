@@ -2,10 +2,14 @@
   "name": "blockchain-explorer-telegram-bot",
   "version": "0.1.0",
   "description": "Blockchain explorer Telegram bot",
-  "main": "index.js",
+  "main": "lib/bot.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "mocha"
+    "build": "flow-remove-types -p src/ -d lib/ && npm run eslint",
+    "prestart": "npm run build",
+    "start": "node lib/bot.js",
+    "test": "mocha",
+    "flow": "flow",
+    "eslint": "eslint . --fix --ignore-pattern node_modules/"
   },
   "keywords": [],
   "author": "nnqq",
@@ -22,10 +26,14 @@
     "ws": "^6.1.2"
   },
   "devDependencies": {
+    "babel-eslint": "^10.0.1",
     "chai": "^4.2.0",
     "eslint": "^5.9.0",
     "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-flowtype": "^3.2.0",
     "eslint-plugin-import": "^2.14.0",
+    "flow-bin": "^0.89.0",
+    "flow-remove-types": "^1.2.3",
     "mocha": "^5.2.0"
   }
 }

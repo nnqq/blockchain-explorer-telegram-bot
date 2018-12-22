@@ -1,3 +1,14 @@
 {
-  "extends": "airbnb-base"
+  "extends": [
+    "airbnb-base",
+    "plugin:flowtype/recommended"
+  ],
+  "parser": "babel-eslint",
+  "plugins": [
+    "flowtype"
+  ],
+  "rules": {
+    "no-await-in-loop": "off",
+    "no-restricted-syntax": "off"
+  }
 }

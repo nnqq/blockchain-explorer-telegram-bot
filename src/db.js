@@ -1,4 +1,17 @@
-//
+// @flow
+import type {
+  typeAddrWatchListFindOne,
+  typeAddrWatchListFindAll,
+  typeAddrWatchListFindAndCountAll,
+} from '../flow-types/db/addrWatchList';
+import type {
+  typeSubscribeActualPriceFindOne,
+  typeSubscribeActualPriceFindAll,
+} from '../flow-types/db/subscribeActualPrice';
+import type { typePriceWatchListfindAndCountAll } from '../flow-types/db/priceWatchList';
+import type { typeBtcTxItem } from '../flow-types/btc/btcTxItem';
+import type { typeEthInfuraNewHeads } from '../flow-types/eth/ethInfuraNewHeads';
+import type { typeEthBlock } from '../flow-types/eth/ethBlock';
 
 const Sequelize = require('sequelize');
 const logger = require('pino')();
@@ -110,7 +123,7 @@ const SubscribeActualPrice = sequelize.define('SubscribeActualPrice', {
 
 SubscribeActualPrice.sync();
 
-function btcSub(wsBtc, address) {
+function btcSub(wsBtc: Object, address: string) {
   const addrSub = JSON.stringify({
     op: 'addr_sub',
     addr: address,
@@ -118,7 +131,7 @@ function btcSub(wsBtc, address) {
   wsBtc.send(addrSub);
 }
 
-function btcUnsub(wsBtc, address) {
+function btcUnsub(wsBtc: Object, address: string) {
   const addrUnsub = JSON.stringify({
     op: 'addr_unsub',
     addr: address,
@@ -126,8 +139,8 @@ function btcUnsub(wsBtc, address) {
   wsBtc.send(addrUnsub);
 }
 
-async function checkUserWatchersLimit(chat) {
-  const userRows = await AddrWatchList.count({
+async function checkUserWatchersLimit(chat: number) {
+  const userRows: number = await AddrWatchList.count({
     where: {
       chatId: chat,
     },
@@ -139,8 +152,8 @@ async function checkUserWatchersLimit(chat) {
 }
 
 class db {
-  static async btcUpdateSubs(wsBtc) {
-    const btcRows = await AddrWatchList.findAll({
+  static async btcUpdateSubs(wsBtc: Object) {
+    const btcRows: typeAddrWatchListFindAll = await AddrWatchList.findAll({
       where: {
         coinName: 'bitcoin',
       },
@@ -152,14 +165,14 @@ class db {
     });
   }
 
-  static async getWatchListMsg(chat) {
-    const watchList = await AddrWatchList.findAndCountAll({
+  static async getWatchListMsg(chat: number): Promise<string> {
+    const watchList: typeAddrWatchListFindAndCountAll = await AddrWatchList.findAndCountAll({
       where: {
         chatId: chat,
       },
     });
 
-    let addrsList = '';
+    let addrsList: string = '';
     watchList.rows.forEach((row, i) => {
       const { coinName, address } = row.dataValues;
       addrsList += `\n${i + 1}) ${v.capitalize(coinName)} /${address}`;
@@ -176,7 +189,7 @@ class db {
       `;
   }
 
-  static async btcSubAndCreate(wsBtc, chat, addr) {
+  static async btcSubAndCreate(wsBtc: Object, chat: number, addr: string) {
     await checkUserWatchersLimit(chat);
     btcSub(wsBtc, addr);
     await AddrWatchList.create({
@@ -185,22 +198,23 @@ class db {
     });
   }
 
-  static async btcUnsubAndDelete(wsBtc, chat, addr) {
-    const [rowToDelete, otherUsersWatchSameAddr] = await Promise.all([
-      AddrWatchList.findOne({
-        where: {
-          chatId: chat,
-          coinName: 'bitcoin',
-          address: addr,
-        },
-      }),
-      AddrWatchList.count({
-        where: {
-          address: addr,
-          coinName: 'bitcoin',
-        },
-      }),
-    ]);
+  static async btcUnsubAndDelete(wsBtc: Object, chat: number, addr: string) {
+    const [rowToDelete, otherUsersWatchSameAddr]: [typeAddrWatchListFindOne,
+      number] = await Promise.all([
+        AddrWatchList.findOne({
+          where: {
+            chatId: chat,
+            coinName: 'bitcoin',
+            address: addr,
+          },
+        }),
+        AddrWatchList.count({
+          where: {
+            address: addr,
+            coinName: 'bitcoin',
+          },
+        }),
+      ]);
     if (!rowToDelete) {
       throw new Error('You are not Watching this address to delete them /help');
     }
@@ -208,7 +222,7 @@ class db {
     await rowToDelete.destroy();
   }
 
-  static async ethCreate(chat, addr) {
+  static async ethCreate(chat: number, addr: string) {
     await checkUserWatchersLimit(chat);
     await AddrWatchList.create({
       chatId: chat,
@@ -216,8 +230,8 @@ class db {
     });
   }
 
-  static async ethDelete(chat, addr) {
-    const rowToDelete = await AddrWatchList.findOne({
+  static async ethDelete(chat: number, addr: string) {
+    const rowToDelete: typeAddrWatchListFindOne = await AddrWatchList.findOne({
       where: {
         chatId: chat,
         address: addr,
@@ -229,8 +243,8 @@ class db {
     await rowToDelete.destroy();
   }
 
-  static async unsubAndDeleteAll(wsBtc, chat) {
-    const rowsToDelete = await AddrWatchList.findAll({
+  static async unsubAndDeleteAll(wsBtc: Object, chat: number) {
+    const rowsToDelete: typeAddrWatchListFindAll = await AddrWatchList.findAll({
       where: {
         chatId: chat,
       },
@@ -238,7 +252,7 @@ class db {
 
     for (const row of rowsToDelete) {
       const { address, coinName } = row.dataValues;
-      const otherUsersWatchSameAddr = await AddrWatchList.count({
+      const otherUsersWatchSameAddr: number = await AddrWatchList.count({
         where: {
           address,
           coinName: 'bitcoin',
@@ -256,14 +270,14 @@ class db {
     });
   }
 
-  static async getPriceWatchMsg(chat) {
-    const userRows = await PriceWatchList.findAndCountAll({
+  static async getPriceWatchMsg(chat: number): Promise<string> {
+    const userRows: typePriceWatchListfindAndCountAll = await PriceWatchList.findAndCountAll({
       where: {
         chatId: chat,
       },
     });
 
-    let watchList = '';
+    let watchList: string = '';
     userRows.rows.forEach((row, i) => {
       const { coinName, priceLow, priceHigh } = row.dataValues;
       watchList += `\n${i + 1}) ${v.capitalize(coinName)} ${priceLow}-${priceHigh} USD`;
@@ -281,7 +295,7 @@ class db {
       `;
   }
 
-  static async createPriceWatcher(chat, coin, priceLo, priceHi) {
+  static async createPriceWatcher(chat: number, coin: string, priceLo: number, priceHi: number) {
     try {
       await PriceWatchList.create({
         chatId: chat,
@@ -296,7 +310,7 @@ class db {
     }
   }
 
-  static async deletePriceWatcher(chat, coin) {
+  static async deletePriceWatcher(chat: number, coin: string) {
     await PriceWatchList.destroy({
       where: {
         chatId: chat,
@@ -305,7 +319,7 @@ class db {
     });
   }
 
-  static getUserPriceSubs(chat) {
+  static getUserPriceSubs(chat: number): Promise<typeSubscribeActualPriceFindOne> {
     return SubscribeActualPrice.findOne({
       where: {
         chatId: chat,
@@ -313,14 +327,14 @@ class db {
     });
   }
 
-  static async subsActualPrice(chat, interval) {
+  static async subsActualPrice(chat: number, interval: number) {
     await SubscribeActualPrice.create({
       chatId: chat,
       hoursInterval: interval,
     });
   }
 
-  static async unsubActualPrice(chat) {
+  static async unsubActualPrice(chat: number) {
     await SubscribeActualPrice.destroy({
       where: {
         chatId: chat,
@@ -328,16 +342,16 @@ class db {
     });
   }
 
-  static async sendNotifsActualPrice(bot, interval, priceBtcUsd,
-    priceEthUsd) {
+  static async sendNotifsActualPrice(bot: Object, interval: number, priceBtcUsd: number,
+    priceEthUsd: number) {
     try {
-      const priceSubsRows = await SubscribeActualPrice.findAll({
+      const priceSubsRows: typeSubscribeActualPriceFindAll = await SubscribeActualPrice.findAll({
         where: {
           hoursInterval: interval,
         },
       });
 
-      const notifMsg = xs`
+      const notifMsg: string = xs`
       ${template.watchListNotifHeader('subscribe_price')}
       
       ${template.coinPrice(priceBtcUsd, priceEthUsd)}
@@ -353,8 +367,8 @@ class db {
     }
   }
 
-  static async btcSendNotifsNewTx(bot, dataTx, priceBtcUsd) {
-    const addrsFromTx = [];
+  static async btcSendNotifsNewTx(bot: Object, dataTx: typeBtcTxItem, priceBtcUsd: number) {
+    const addrsFromTx: Array<string> = [];
     dataTx.inputs.forEach((input) => {
       if (input.prev_out) addrsFromTx.push(input.prev_out.addr);
     });
@@ -362,7 +376,7 @@ class db {
       addrsFromTx.push(output.addr);
     });
 
-    const btcRows = await AddrWatchList.findAll({
+    const btcRows: typeAddrWatchListFindAll = await AddrWatchList.findAll({
       where: {
         coinName: 'bitcoin',
         address: {
@@ -371,7 +385,7 @@ class db {
       },
     });
 
-    const notifMsg = xs`
+    const notifMsg: string = xs`
       ${template.watchListNotifHeader('watch_address', true)}
       
       ${template.btcTxItem(dataTx, priceBtcUsd)}
@@ -384,10 +398,10 @@ class db {
     });
   }
 
-  static async ethSendNotifsNewTx(bot, eth, newBlock,
-    priceEthUsd) {
+  static async ethSendNotifsNewTx(bot: Object, eth: Object, newBlock: typeEthInfuraNewHeads,
+    priceEthUsd: number) {
     setTimeout(async () => {
-      const [dataBlock, ethRows] = await Promise.all([
+      const [dataBlock, ethRows]: [typeEthBlock, typeAddrWatchListFindAll] = await Promise.all([
         eth.proxy.eth_getBlockByNumber(newBlock.params.result.number),
         AddrWatchList.findAll({
           where: {

@@ -1,4 +1,6 @@
-//
+// @flow
+import type { typeMetrics } from '../flow-types/stats/metrics';
+import type { typeUsers } from '../flow-types/stats/users';
 
 const EventEmitter = require('events');
 const { xs } = require('./template');
@@ -6,16 +8,16 @@ const { xs } = require('./template');
 class MyEmitter extends EventEmitter {}
 const event = new MyEmitter();
 
-let users = {};
+let users: typeUsers = {};
 
-const metrics = {
+const metrics: typeMetrics = {
   dau: 0,
   receivedMsg: 0,
 };
 
 event.once('log started', (bot) => {
   setInterval(async () => {
-    const msg = xs`
+    const msg: string = xs`
       📊 Bot daily stats:
       DAU: ${metrics.dau}
       Received msg: ${metrics.receivedMsg}
@@ -31,7 +33,7 @@ event.once('log started', (bot) => {
 });
 
 class stats {
-  static counter(ctx, bot) {
+  static counter(ctx: Object, bot: Object) {
     event.emit('log started', bot);
     metrics.receivedMsg += 1;
     if (!users[`${ctx.chat.id}`]) {
