@@ -377,8 +377,6 @@ aboutMenu.enter((ctx) => {
     Thank you ❤️
     
     ⚖️ Bot is Open Source project: https://github.com/nnqq/blockchain-explorer-telegram-bot
-    
-    👋 Contact author: @nn2qq
     `);
 });
 
