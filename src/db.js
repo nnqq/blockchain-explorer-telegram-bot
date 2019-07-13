@@ -358,9 +358,10 @@ class db {
       `;
 
       priceSubsRows.forEach((row) => {
-        bot.telegram.sendMessage(row.dataValues.chatId, notifMsg).catch((e) => {
-          if (e.message !== '403: Forbidden: bot was blocked by the user') logger.info(e);
-        });
+        bot.telegram.sendMessage(row.dataValues.chatId, v.toTelegramSafeLength(notifMsg))
+          .catch((e) => {
+            if (e.message !== '403: Forbidden: bot was blocked by the user') logger.info(e);
+          });
       });
     } catch (e) {
       logger.info(e);
@@ -392,9 +393,10 @@ class db {
       `;
 
     btcRows.forEach((row) => {
-      bot.telegram.sendMessage(row.dataValues.chatId, notifMsg).catch((e) => {
-        if (e.message !== '403: Forbidden: bot was blocked by the user') logger.info(e);
-      });
+      bot.telegram.sendMessage(row.dataValues.chatId, v.toTelegramSafeLength(notifMsg))
+        .catch((e) => {
+          if (e.message !== '403: Forbidden: bot was blocked by the user') logger.info(e);
+        });
     });
   }
 
@@ -421,9 +423,10 @@ class db {
             
             ${template.ethTxWatchList(tx, priceEthUsd)}
             `;
-            bot.telegram.sendMessage(chatId, notifMsg).catch((e) => {
-              if (e.message !== '403: Forbidden: bot was blocked by the user') logger.info(e);
-            });
+            bot.telegram.sendMessage(chatId, v.toTelegramSafeLength(notifMsg))
+              .catch((e) => {
+                if (e.message !== '403: Forbidden: bot was blocked by the user') logger.info(e);
+              });
           }
         });
       });

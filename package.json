@@ -7,9 +7,10 @@
     "build": "flow-remove-types -p src/ -d lib/ && npm run eslint",
     "prestart": "npm run build",
     "start": "node lib/bot.js",
-    "test": "mocha",
+    "test": "mocha --exit",
     "flow": "flow",
-    "eslint": "eslint . --fix --ignore-pattern node_modules/"
+    "eslint": "eslint . --fix --ignore-pattern node_modules/",
+    "deploy": "now --public && now alias"
   },
   "keywords": [],
   "author": "nnqq",

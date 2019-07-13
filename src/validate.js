@@ -95,6 +95,12 @@ class validate {
   static capitalize(str: string): string {
     return str[0].toUpperCase() + str.slice(1);
   }
+
+  static toTelegramSafeLength(message: string): string {
+    if (message.length > 4096) return message.slice(0, 4096);
+
+    return message;
+  }
 }
 
 module.exports = validate;

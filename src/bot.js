@@ -131,9 +131,10 @@ async function updatePriceSendNotif() {
           ${template.watchPriceNotifBody(coinName, price.btcUsd, priceLow, priceHigh)}
           `;
 
-        bot.telegram.sendMessage(chatId, notifMsg).catch((e) => {
-          if (e.message !== '403: Forbidden: bot was blocked by the user') logger.info(e);
-        });
+        bot.telegram.sendMessage(chatId, v.toTelegramSafeLength(notifMsg))
+          .catch((e) => {
+            if (e.message !== '403: Forbidden: bot was blocked by the user') logger.info(e);
+          });
       } else if (isEthAlert) {
         const notifMsg: string = xs`
           ${template.watchListNotifHeader('watch_price')}
@@ -141,9 +142,10 @@ async function updatePriceSendNotif() {
           ${template.watchPriceNotifBody(coinName, price.ethUsd, priceLow, priceHigh)}
           `;
 
-        bot.telegram.sendMessage(chatId, notifMsg).catch((e) => {
-          if (e.message !== '403: Forbidden: bot was blocked by the user') logger.info(e);
-        });
+        bot.telegram.sendMessage(chatId, v.toTelegramSafeLength(notifMsg))
+          .catch((e) => {
+            if (e.message !== '403: Forbidden: bot was blocked by the user') logger.info(e);
+          });
       }
     });
   } catch (e) {

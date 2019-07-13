@@ -4,6 +4,7 @@ import type { typeUsers } from '../flow-types/stats/users';
 
 const EventEmitter = require('events');
 const { xs } = require('./template');
+const v = require('./validate');
 
 class MyEmitter extends EventEmitter {}
 const event = new MyEmitter();
@@ -23,7 +24,7 @@ event.once('log started', (bot) => {
       Received msg: ${metrics.receivedMsg}
     `;
 
-    await bot.telegram.sendMessage(process.env.ADMIN_CHATID, msg);
+    await bot.telegram.sendMessage(process.env.ADMIN_CHATID, v.toTelegramSafeLength(msg));
 
     users = {};
     Object.keys(metrics).forEach((key) => {
