@@ -4,12 +4,12 @@
   "description": "Blockchain explorer Telegram bot",
   "main": "lib/bot.js",
   "scripts": {
-    "build": "flow-remove-types -p src/ -d lib/ && npm run eslint",
+    "buildDev": "flow-remove-types -p src/ -d lib/ && npm run eslint",
     "start": "node lib/bot.js",
     "test": "mocha --exit",
     "flow": "flow",
     "eslint": "eslint . --fix --ignore-pattern node_modules/",
-    "deploy": "npm run build && now --public && now alias"
+    "deploy": "npm run buildDev && now --public && now alias"
   },
   "keywords": [],
   "author": "nnqq",

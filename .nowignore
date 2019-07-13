@@ -1,4 +1,11 @@
-node_modules
 .idea
+flow-types
+node_modules
+src
 test
+.eslintrc.json
+.flowconfig
+.gitignore
+LICENSE
+README.md
 tokens.json
