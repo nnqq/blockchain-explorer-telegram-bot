@@ -75,5 +75,3 @@ Donation addresses:
 BTC 1NMcEUqi5aaHJgjeA4YvQuSpCQFHpMwFvh
 
 ETH 0x98C3d9261CC817D47f262F02852483E8e3BAc5dc
-
-Contact author: [Telegram](https://t.me/nn2qq)
