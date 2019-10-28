@@ -9,7 +9,10 @@
     "test": "mocha --exit",
     "flow": "flow",
     "eslint": "eslint . --fix --ignore-pattern node_modules/",
-    "deploy": "npm run buildDev && now --public && now alias"
+    "incVersion": "semver -i $(cat version.num) > version.num",
+    "buildContainer": "/usr/local/bin/docker build -t dokku/blockchain-explorer-telegram-bot:$(cat version.num) .",
+    "deployContainer": "/usr/local/bin/docker save dokku/blockchain-explorer-telegram-bot:$(cat version.num) | bzip2 | ssh root@shopgrip.ru \"bunzip2 | docker load | dokku tags:create blockchain-explorer-telegram-bot previous; dokku tags:deploy blockchain-explorer-telegram-bot $(cat version.num)\"",
+    "deployBlockchainExplorerTelegramBot": "npm ci && npm run buildDev && npm run incVersion && npm run buildContainer && npm run deployContainer"
   },
   "keywords": [],
   "author": "nnqq",
@@ -34,6 +37,7 @@
     "eslint-plugin-import": "^2.14.0",
     "flow-bin": "^0.89.0",
     "flow-remove-types": "^1.2.3",
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "semver": "^6.3.0"
   }
 }
