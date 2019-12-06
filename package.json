@@ -4,7 +4,9 @@
   "description": "Blockchain explorer Telegram bot",
   "main": "lib/bot.js",
   "scripts": {
-    "buildDev": "flow-remove-types -p src/ -d lib/ && npm run eslint",
+    "removeTypes": "flow-remove-types -p src/ -d lib/",
+    "postinstall": "npm run removeTypes",
+    "buildDev": "npm run removeTypes && npm run eslint",
     "start": "node lib/bot.js",
     "test": "mocha --exit",
     "flow": "flow",
