@@ -6,7 +6,7 @@
   "scripts": {
     "build": "flow-remove-types -p src/ -d dist/",
     "buildDev": "npm run removeTypes && npm run eslint",
-    "start": "node lib/bot.js",
+    "start": "node dist/bot.js",
     "test": "mocha --exit",
     "flow": "flow",
     "eslint": "eslint . --fix --ignore-pattern node_modules/"
