@@ -1,8 +1,9 @@
 FROM node:lts-alpine as build
 WORKDIR /app
 COPY package*.json /app/
-RUN npm ci --only=production
+RUN npm i
 RUN npm run build
+RUN npm prune --production
 
 FROM node:lts-alpine
 COPY --from=build /app/dist /app
