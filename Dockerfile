@@ -1,6 +1,6 @@
 FROM node:lts-alpine as build
 WORKDIR /app
-COPY package*.json /app/
+COPY / /app/
 RUN npm i
 RUN npm run build
 RUN npm prune --production
