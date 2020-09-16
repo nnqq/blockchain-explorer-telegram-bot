@@ -1,11 +1,9 @@
-FROM node:lts-alpine
-
-WORKDIR /usr/src/app
-
-COPY package*.json ./
-
+FROM node:lts-alpine as build
+WORKDIR /app
+COPY package*.json /app/
 RUN npm ci --only=production
+RUN npm run build
 
-COPY ./lib ./
-
-CMD [ "node", "/usr/src/app/bot.js" ]
+FROM node:lts-alpine
+COPY --from=build /app/dist /app
+COPY --from=build /app/node_modules /app/node_modules

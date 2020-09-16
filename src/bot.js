@@ -28,6 +28,9 @@ const { stats } = require('./stats');
 const v = require('./validate');
 const { template, xs } = require('./template');
 const { db, PriceWatchList } = require('./db');
+const healthz = require('./healthz');
+
+healthz();
 
 let startMsg: string = xs`
   🤖 Welcome to the Bitcoin and Ethereum blockchain bot. Select an option:

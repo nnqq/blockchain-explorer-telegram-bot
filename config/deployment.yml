@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: telegram-bot
+  labels:
+    app: telegram-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: telegram-bot
+  template:
+    metadata:
+      labels:
+        app: telegram-bot
+      annotations:
+        linkerd.io/inject: enabled
+        config.linkerd.io/skip-outbound-ports: "443,80"
+        config.linkerd.io/proxy-cpu-request: 1m
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: telegram-bot
+          image: busybox
+          command:
+            - node
+            - /app/bot.js
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - sleep
+                  - 5s
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 81
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 81
+          ports:
+            - containerPort: 80
+              name: http
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 10m
+              memory: 100Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          env:
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  key: env
+                  name: node
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: port
+                  name: http
+            - name: BOT_WEBHOOK_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: webhookurl
+                  name: bot
+            - name: ETHERSCAN_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: token
+                  name: etherscan
+            - name: INFURA_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: token
+                  name: infura
+            - name: ADMIN_CHATID
+              valueFrom:
+                configMapKeyRef:
+                  key: chatid
+                  name: admin
+            - name: BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: token
+                  name: bot
+            - name: DB_URL
+              valueFrom:
+                secretKeyRef:
+                  key: url
+                  name: postresql

@@ -1,0 +1,48 @@
+name: release
+
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      - name: Extract service name
+        uses: bluwy/substitute-string-action@v1
+        id: substr
+        with:
+          _input-text: ${{ github.repository }}
+          nnqq/blockchain-explorer-: ''
+
+      - name: Push to GitHub Packages
+        uses: docker/build-push-action@v1
+        with:
+          username: nnqq
+          password: ${{ secrets.GH_CI_TOKEN }}
+          registry: docker.pkg.github.com
+          repository: ${{ github.repository }}/${{ steps.substr.outputs.result }}
+          tag_with_ref: true
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_CI_TOKEN }}
+
+      - name: Save DigitalOcean kubeconfig
+        run: doctl kubernetes cluster kubeconfig save k8s
+
+      - name: Update deployment file
+        run: sed -i 's|busybox|docker.pkg.github.com/${{ github.repository }}/${{ steps.substr.outputs.result }}:${{ github.event.release.tag_name }}|' $GITHUB_WORKSPACE/config/deployment.yml
+
+      - name: Apply resources
+        run: kubectl -n blockchain-explorer apply -f ${{ github.workspace }}/config
+
+      - name: Verify deployment
+        run: kubectl -n blockchain-explorer rollout status deployment/${{ steps.substr.outputs.result }}

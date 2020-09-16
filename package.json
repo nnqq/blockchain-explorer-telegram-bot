@@ -4,17 +4,12 @@
   "description": "Blockchain explorer Telegram bot",
   "main": "lib/bot.js",
   "scripts": {
-    "removeTypes": "flow-remove-types -p src/ -d lib/",
-    "postinstall": "npm run removeTypes",
+    "build": "flow-remove-types -p src/ -d dist/",
     "buildDev": "npm run removeTypes && npm run eslint",
     "start": "node lib/bot.js",
     "test": "mocha --exit",
     "flow": "flow",
-    "eslint": "eslint . --fix --ignore-pattern node_modules/",
-    "incVersion": "semver -i $(cat version.num) > version.num",
-    "buildContainer": "/usr/local/bin/docker build -t dokku/blockchain-explorer-telegram-bot:$(cat version.num) .",
-    "deployContainer": "/usr/local/bin/docker save dokku/blockchain-explorer-telegram-bot:$(cat version.num) | bzip2 | ssh root@shopgrip.ru \"bunzip2 | docker load | dokku tags:create blockchain-explorer-telegram-bot previous; dokku tags:deploy blockchain-explorer-telegram-bot $(cat version.num)\"",
-    "deployBlockchainExplorerTelegramBot": "npm ci && npm run buildDev && npm run incVersion && npm run buildContainer && npm run deployContainer"
+    "eslint": "eslint . --fix --ignore-pattern node_modules/"
   },
   "keywords": [],
   "author": "nnqq",
