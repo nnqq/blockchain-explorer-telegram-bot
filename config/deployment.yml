@@ -62,6 +62,11 @@ spec:
                 configMapKeyRef:
                   key: port
                   name: http
+            - name: HTTP_HEALTHZPORT
+              valueFrom:
+                configMapKeyRef:
+                  key: healthzport
+                  name: http
             - name: BOT_WEBHOOK_URL
               valueFrom:
                 configMapKeyRef:
