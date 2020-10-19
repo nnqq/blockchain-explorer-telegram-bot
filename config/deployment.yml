@@ -13,13 +13,9 @@ spec:
     metadata:
       labels:
         app: telegram-bot
-      annotations:
-        linkerd.io/inject: enabled
-        config.linkerd.io/skip-outbound-ports: "443,80"
-        config.linkerd.io/proxy-cpu-request: 1m
     spec:
       imagePullSecrets:
-        - name: regcred
+        - name: ghcr
       containers:
         - name: telegram-bot
           image: busybox
@@ -46,8 +42,8 @@ spec:
               protocol: TCP
           resources:
             requests:
-              cpu: 10m
-              memory: 50Mi
+              cpu: 1m
+              memory: 100Mi
             limits:
               cpu: "1"
               memory: 150Mi
