@@ -26,10 +26,15 @@ const sequelize = new Sequelize(process.env.DB_URL, {
 
   pool: {
     max: 1,
-    min: 0,
+    min: 1,
     acquire: 30000,
     idle: 10000,
   },
+});
+
+sequelize.authenticate().catch((e) => {
+  logger.error(e);
+  process.exit(1);
 });
 
 const AddrWatchList = sequelize.define('AddrWatchList', {
