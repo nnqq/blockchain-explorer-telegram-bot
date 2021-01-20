@@ -32,10 +32,15 @@ const sequelize = new Sequelize(process.env.DB_URL, {
   },
 });
 
-sequelize.authenticate().catch((e) => {
-  logger.error(e);
-  process.exit(1);
-});
+(async () => {
+  try {
+    await sequelize.authenticate();
+    logger.info('db connected');
+  } catch (e) {
+    logger.error(e);
+    process.exit(1);
+  }
+})();
 
 const AddrWatchList = sequelize.define('AddrWatchList', {
   chatId: {
