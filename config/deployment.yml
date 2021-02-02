@@ -22,12 +22,6 @@ spec:
           command:
             - node
             - /app/bot.js
-          lifecycle:
-            preStop:
-              exec:
-                command:
-                  - sleep
-                  - 5s
           livenessProbe:
             httpGet:
               path: /healthz
