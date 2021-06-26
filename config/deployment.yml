@@ -15,8 +15,8 @@ spec:
         app: telegram-bot
       annotations:
         linkerd.io/inject: enabled
-        config.linkerd.io/proxy-cpu-request: 5m
-        config.linkerd.io/proxy-memory-request: 10Mi
+        config.linkerd.io/proxy-cpu-request: 1m
+        config.linkerd.io/proxy-memory-request: 5Mi
         config.linkerd.io/skip-outbound-ports: "80,443"
     spec:
       imagePullSecrets:
@@ -41,8 +41,8 @@ spec:
               protocol: TCP
           resources:
             requests:
-              cpu: 15m
-              memory: 110Mi
+              cpu: 1m
+              memory: 86Mi
             limits:
               cpu: "1"
               memory: 200Mi
