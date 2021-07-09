@@ -13,11 +13,6 @@ spec:
     metadata:
       labels:
         app: telegram-bot
-      annotations:
-        linkerd.io/inject: enabled
-        config.linkerd.io/proxy-cpu-request: 1m
-        config.linkerd.io/proxy-memory-request: 5Mi
-        config.linkerd.io/skip-outbound-ports: "80,443"
     spec:
       imagePullSecrets:
         - name: ghcr
