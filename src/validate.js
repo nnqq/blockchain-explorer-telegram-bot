@@ -50,7 +50,7 @@ class validate {
   }
 
   static isBtcAddress(str: string): boolean {
-    const pattern: RegExp = /^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$/;
+    const pattern: RegExp = /^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,39}$/;
     return pattern.test(str);
   }
 
