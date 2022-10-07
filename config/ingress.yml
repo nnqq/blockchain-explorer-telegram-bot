@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   name: ingress
   annotations:
-    kubernetes.io/ingress.class: nginx
+    kubernetes.io/ingress.class: nginx-2
     nginx.ingress.kubernetes.io/rewrite-target: /$2
     cert-manager.io/cluster-issuer: letsencrypt
 spec:
@@ -15,7 +15,10 @@ spec:
     - host: blockchain-explorer.shopgrip.ru
       http:
         paths:
-          - path: /telegram-bot(/|$)(.*)
+          - path: /telegram-bot(/|$)(.*)\
+            pathType: ImplementationSpecific
             backend:
-              serviceName: telegram-bot
-              servicePort: 80
+              service:
+                name: telegram-bot
+              port:
+                number: 80
