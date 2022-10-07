@@ -4,7 +4,6 @@ metadata:
   name: ingress
   annotations:
     kubernetes.io/ingress.class: nginx-2
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
     cert-manager.io/cluster-issuer: letsencrypt
 spec:
   tls:
@@ -15,7 +14,7 @@ spec:
     - host: blockchain-explorer.shopgrip.ru
       http:
         paths:
-          - path: /telegram-bot(/|$)(.*)\
+          - path: /
             pathType: ImplementationSpecific
             backend:
               service:
