@@ -20,5 +20,5 @@ spec:
             backend:
               service:
                 name: telegram-bot
-              port:
-                number: 80
+                port:
+                  number: 80
