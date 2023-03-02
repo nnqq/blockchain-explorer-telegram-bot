@@ -34,7 +34,7 @@
     "eslint-plugin-import": "^2.14.0",
     "flow-bin": "^0.89.0",
     "flow-remove-types": "^1.2.3",
-    "mocha": "^5.2.0",
+    "mocha": "^10.2.0",
     "semver": "^6.3.0"
   }
 }
