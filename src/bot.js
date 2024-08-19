@@ -376,11 +376,6 @@ stage.register(aboutMenu);
 
 aboutMenu.enter((ctx) => {
   ctx.reply(xs`
-    ☕️ Donation addresses (tap btc/eth for simple copy):
-    /BTC 1NMcEUqi5aaHJgjeA4YvQuSpCQFHpMwFvh
-    /ETH 0x98C3d9261CC817D47f262F02852483E8e3BAc5dc
-    Thank you ❤️
-    
     ⚖️ Bot is Open Source project: https://github.com/nnqq/blockchain-explorer-telegram-bot
     `);
 });
